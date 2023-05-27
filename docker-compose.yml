@@ -1,0 +1,10 @@
+version: '3'
+services:
+  python-container:
+    build:
+      context: .
+      dockerfile: container-python.dockerfile
+    ports:
+      - 8001:5000
+    volumes:
+      - ./srcPython:/app
