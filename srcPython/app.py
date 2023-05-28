@@ -1,8 +1,16 @@
 from flask import Flask, request, jsonify
 import pymssql
 from decimal import Decimal, ROUND_HALF_UP
+import asyncio
+import logging
+from azure.eventhub import EventData
+from azure.eventhub.aio import EventHubProducerClient
+import json
 
 app = Flask(__name__)
+
+# Configurar o nível de log desejado (por exemplo, DEBUG, INFO, WARNING, ERROR)
+app.logger.setLevel(logging.DEBUG)
 
 # Configurar a conexão com o banco de dados SQL Server
 server = 'dbhackathon.database.windows.net'
@@ -10,6 +18,13 @@ port = 1433
 database = 'hack'
 username = 'hack'
 password = 'Password23'
+
+# Configurar a conexão com o Eventhub
+#EVENT_HUB_CONNECTION_STR = "Endpoint=sb://eventhack.servicebus.windows.net/;SharedAccessKeyName=hack;SharedAccessKey=HeHeVaVqyVkntO2FnjQcs2Ilh/4MUDo4y+AEhKp8z+g=;EntityPath=simulacoes"
+EVENT_HUB_CONNECTION_STR = "Endpoint=sb://meuhackcaixa.servicebus.windows.net/;SharedAccessKeyName=minha-politica;SharedAccessKey=kpOB1ZLepFAnb3evFzjspxCXX+voi6Inn+AEhHZBSlA=;EntityPath=testehackcaixa"
+
+
+#EVENT_HUB_NAME = "eventhack"
 
 # Configurar a conexão com o banco de dados MySQL
 conn = pymssql.connect(
@@ -20,6 +35,32 @@ conn = pymssql.connect(
     database=database
 )
 
+def decimal_default(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError("Object of type 'Decimal' is not JSON serializable")
+
+# Grava os dados no Eventhub
+async def gravar_eventhub(mensagem):
+    app.logger.info('Iniciando a gravação dos dados no Event Hub')
+
+    producer = EventHubProducerClient.from_connection_string(
+        conn_str=EVENT_HUB_CONNECTION_STR
+    )
+
+    async with producer:
+        # Create a batch.
+        event_data_batch = await producer.create_batch()
+
+        # Add events to the batch.
+        event_data_batch.add(EventData(mensagem))
+
+        # Send the batch of events to the event hub.
+        await producer.send_batch(event_data_batch)
+
+    app.logger.info('Mensagens enviadas com sucesso!')
+    
+    
 # Gera sugestões baseadas nos parametros informados pelos usuários que não encontraram produtos adequados
 def gera_sugestao(valor_desejado, prazo):
     sugestoes = []
@@ -51,7 +92,7 @@ def gera_sugestao(valor_desejado, prazo):
     produtos_por_valor = cursor.fetchall()
 
     for produto in produtos_por_valor:
-        msg = f'Para o valor de R$ {valor_desejado} você pode contratar o produto {produto[1]} com taxa de juros de { round( produto[2]*100 , 2) }% ao mês e prazo de {produto[3]} a {produto[4]} meses.'
+        msg = f'Para o valor de R$ {valor_desejado} você pode contratar {produto[1]} com taxa de juros de { round( produto[2]*100 , 2) }% ao mês e prazo de {produto[3]} a {produto[4]} meses.'
         sugestoes.append(msg)
 
     envelope_retorno = {'error': 'Nenhum produto encontrado para os valores e prazos informados.',
@@ -138,6 +179,7 @@ FROM
 # Definir a rota para receber a solicitação de simulação de empréstimo
 @app.route('/simulacao', methods=['POST'])
 def simulacao_emprestimo():
+    app.logger.info('Esta é uma mensagem de log de nível INFO')
     envelope_json = request.get_json()
 
     # Verificar se todos os campos obrigatórios estão presentes
@@ -208,13 +250,10 @@ def simulacao_emprestimo():
         }
 
         # Gravar o envelope JSON no Eventhub
-        #gravar_eventhub(envelope_retorno)
+        asyncio.run(gravar_eventhub( jsonify(envelope_retorno).get_data(as_text=True) ))
 
         return jsonify(envelope_retorno)
 
-def validar_dados(envelope_json, parametro):
-    # Implementar a lógica de validação dos dados
-    return True  # Substitua pela sua própria lógica
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
