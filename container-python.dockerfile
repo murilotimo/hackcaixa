@@ -5,7 +5,7 @@ FROM python:3.11
 WORKDIR /app
 
 # Instala as dependências do projeto
-RUN pip install flask pymssql
+RUN pip install flask pymssql azure-eventhub
 
 # Expõe a porta 5000 para acesso à API
 EXPOSE 5000
