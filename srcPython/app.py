@@ -20,8 +20,8 @@ username = 'hack'
 password = 'Password23'
 
 # Configurar a conexão com o Eventhub
-#EVENT_HUB_CONNECTION_STR = "Endpoint=sb://eventhack.servicebus.windows.net/;SharedAccessKeyName=hack;SharedAccessKey=HeHeVaVqyVkntO2FnjQcs2Ilh/4MUDo4y+AEhKp8z+g=;EntityPath=simulacoes"
-EVENT_HUB_CONNECTION_STR = "Endpoint=sb://meuhackcaixa.servicebus.windows.net/;SharedAccessKeyName=minha-politica;SharedAccessKey=kpOB1ZLepFAnb3evFzjspxCXX+voi6Inn+AEhHZBSlA=;EntityPath=testehackcaixa"
+EVENT_HUB_CONNECTION_STR = "Endpoint=sb://eventhack.servicebus.windows.net/;SharedAccessKeyName=hack;SharedAccessKey=HeHeVaVqyVkntO2FnjQcs2Ilh/4MUDo4y+AEhKp8z+g=;EntityPath=simulacoes"
+#EVENT_HUB_CONNECTION_STR = "Endpoint=sb://meuhackcaixa.servicebus.windows.net/;SharedAccessKeyName=minha-politica;SharedAccessKey=kpOB1ZLepFAnb3evFzjspxCXX+voi6Inn+AEhHZBSlA=;EntityPath=testehackcaixa"
 
 
 #EVENT_HUB_NAME = "eventhack"
@@ -34,11 +34,6 @@ conn = pymssql.connect(
     password=password,
     database=database
 )
-
-def decimal_default(obj):
-    if isinstance(obj, Decimal):
-        return float(obj)
-    raise TypeError("Object of type 'Decimal' is not JSON serializable")
 
 # Grava os dados no Eventhub
 async def gravar_eventhub(mensagem):
