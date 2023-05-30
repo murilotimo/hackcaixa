@@ -10,6 +10,7 @@ EVENT_HUB_CONNECTION_STR = "Endpoint=sb://eventhack.servicebus.windows.net/;Shar
 
 async def on_event(partition_context, event):
     # Print the event data.
+    print(event)
     print(
         'Received the event: "{}" from the partition with ID: "{}"'.format(
             event.body_as_str(encoding="UTF-8"), partition_context.partition_id
@@ -29,7 +30,7 @@ async def main():
     async with client:
         # Call the receive method. Read from the beginning of the
         # partition (starting_position: "-1")
-        await client.receive(on_event=on_event, starting_position="-1")
+        await client.receive(on_event=on_event)
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
