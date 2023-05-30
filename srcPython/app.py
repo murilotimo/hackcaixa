@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
-import pymssql
-from decimal import Decimal, ROUND_HALF_UP
 import asyncio
 import logging
+import pymssql
+from decimal import Decimal, ROUND_HALF_UP
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient
 import json
@@ -43,11 +43,10 @@ async def gravar_eventhub(mensagem):
         conn_str=EVENT_HUB_CONNECTION_STR
     )
 
+    app.logger.info(mensagem)
     async with producer:
         # Create a batch.
         event_data_batch = await producer.create_batch()
-
-        # Add events to the batch.
         event_data_batch.add(EventData(mensagem))
 
         # Send the batch of events to the event hub.
@@ -68,7 +67,7 @@ def gera_sugestao(valor_desejado, prazo):
         sugestoes.append(f'O valor mínimo de empréstimo é de 200 reais R$ {valor_minimo}')
 
     sql_produto_por_valor = f'''
-        SELECT
+    SELECT
         CO_PRODUTO,
         NO_PRODUTO,
         PC_TAXA_JUROS,
@@ -154,7 +153,7 @@ def calcular_amortizacao_price(valor_desejado, prazo, taxa_juros):
 @app.route('/')
 def hello_world():
     sql = '''
-    SELECT
+SELECT
 	CO_PRODUTO,
 	NO_PRODUTO,
 	PC_TAXA_JUROS,
@@ -251,4 +250,5 @@ def simulacao_emprestimo():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    #app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0')
