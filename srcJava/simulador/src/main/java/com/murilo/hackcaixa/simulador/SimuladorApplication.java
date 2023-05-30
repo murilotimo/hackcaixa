@@ -22,15 +22,57 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.azure.messaging.eventhubs.*;
+import java.util.Arrays;
+
 @RestController
 @SpringBootApplication
 public class SimuladorApplication {
 	private static Connection connection;
-	
-	private static void setJsonResponse(HttpServletResponse response) {
+    
+    private static void setJsonResponse(HttpServletResponse response) {
         response.setContentType("application/json");
     }
+    
+    private static final String connectionString = "Endpoint=sb://eventhack.servicebus.windows.net/;SharedAccessKeyName=hack;SharedAccessKey=HeHeVaVqyVkntO2FnjQcs2Ilh/4MUDo4y+AEhKp8z+g=;EntityPath=simulacoes";
 
+    /**
+     * Code sample for publishing events.
+     * @throws IllegalArgumentException if the EventData is bigger than the max batch size.
+     */
+    public static void publishEvents(String json) {
+        // create a producer client
+        EventHubProducerClient producer = new EventHubClientBuilder()
+            .connectionString(connectionString)
+            .buildProducerClient();
+
+        // sample events in an array
+        List<EventData> allEvents = Arrays.asList(new EventData(json));
+
+        // create a batch
+        EventDataBatch eventDataBatch = producer.createBatch();
+
+        for (EventData eventData : allEvents) {
+            // try to add the event from the array to the batch
+            if (!eventDataBatch.tryAdd(eventData)) {
+                // if the batch is full, send it and then create a new batch
+                producer.send(eventDataBatch);
+                eventDataBatch = producer.createBatch();
+
+                // Try to add that event that couldn't fit before.
+                if (!eventDataBatch.tryAdd(eventData)) {
+                    throw new IllegalArgumentException("Event is too large for an empty batch. Max size: "
+                        + eventDataBatch.getMaxSizeInBytes());
+                }
+            }
+        }
+        // send the last batch of remaining events
+        if (eventDataBatch.getCount() > 0) {
+            producer.send(eventDataBatch);
+        }
+        producer.close();
+    }
+	
 	static {
         try {
             // Configuração da conexão com o banco de dados
@@ -45,6 +87,8 @@ public class SimuladorApplication {
             e.printStackTrace();
         }
     }
+
+
 
 	/* Classe para representar uma parcela
 	 *	- numero: numero da parcela	
@@ -448,6 +492,17 @@ public class SimuladorApplication {
 			resultadoSimulacao.add(resultadoPRICE);
 
 			envelopeRetorno.put("resultadoSimulacao", resultadoSimulacao);
+
+            // Publicar evento de simulação
+            try{
+                ObjectMapper objectMapper = new ObjectMapper();
+                String json = objectMapper.writeValueAsString(envelopeRetorno);
+                publishEvents(json);
+            }
+            catch (JsonProcessingException e)
+            {
+                e.printStackTrace();
+            }
 
 			try {
 				ObjectMapper objectMapper = new ObjectMapper();
