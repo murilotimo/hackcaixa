@@ -8,3 +8,9 @@ services:
       - 8001:5000
     volumes:
       - ./srcPython:/app
+  java-container:
+    build:
+      context: .
+      dockerfile: container-java.dockerfile
+    ports:
+      - 8002:8080
