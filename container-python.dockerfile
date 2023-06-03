@@ -4,8 +4,11 @@ FROM python:3.11
 # Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
+# Copia o arquivo requirements.txt para o diretório de trabalho
+COPY srcPython/requirements.txt .
+
 # Instala as dependências do projeto
-RUN pip install flask pymssql azure-eventhub
+RUN pip install -r requirements.txt
 
 # Expõe a porta 5000 para acesso à API
 EXPOSE 5000
