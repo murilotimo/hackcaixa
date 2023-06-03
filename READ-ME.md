@@ -186,3 +186,36 @@ Para garantir a proteção adequada das informações sensíveis, é altamente r
 
 
 Lembramos que a segurança das aplicações é uma responsabilidade compartilhada entre a equipe de desenvolvimento, operações e segurança da informação. Estamos comprometidos em aprimorar constantemente nossas práticas de segurança e buscar soluções mais robustas para proteger as informações sensíveis dos nossos sistemas.
+
+## Teste de performace das APIS
+
+Realizamos um teste de desempenho em nossas APIs, com um total de 4000 solicitações sequenciais. Apenas para fins educacionais.
+O código está dispponível em `testa_performace.py`
+
+Abaixo estão os resultados obtidos:
+
+**API em Java:**
+- Tempo médio de resposta: 0.0012479993104934693 segundos
+- Tempo mínimo de resposta: 0.000993967056274414 segundos
+- Tempo máximo de resposta: 0.08443641662597656 segundos
+- Tempo total de resposta: 4.991997241973877 segundos
+
+**API em Python:**
+- Tempo médio de resposta: 0.0013938706517219544 segundos
+- Tempo mínimo de resposta: 0.0012693405151367188 segundos
+- Tempo máximo de resposta: 0.007325649261474609 segundos
+- Tempo total de resposta: 5.575482606887817 segundos
+
+Observando os resultados, podemos fazer as seguintes considerações:
+
+1. **Tempos médios de resposta**: A API em Java obteve um tempo médio de resposta ligeiramente mais rápido (0.00124 segundos) em comparação com a API em Python (0.00139 segundos).
+
+2. **Tempos mínimo e máximo de resposta**: A API em Java apresentou um tempo mínimo de resposta de 0.0009 segundos e um tempo máximo de resposta de 0.0844 segundos. Por outro lado, a API em Python teve um tempo mínimo de resposta de 0.0012 segundos e um tempo máximo de resposta de 0.0073 segundos. 
+
+É importante observar que os tempos máximos de resposta em ambas as APIs foram relativamente maiores em comparação com os tempos médios e mínimos, indicando possíveis casos de maior latência.
+
+3. **Tempo total de resposta**: Ao somar todos os tempos de resposta das solicitações (4000 no total), a API em Java registrou um tempo total de resposta de 4.991 segundos, enquanto a API em Python registrou um tempo total de resposta de 5.575 segundos. 
+
+Ambas as APIs mostraram tempos totais de resposta aceitáveis, considerando o número de solicitações. Esperava-se, pessoalmente, um resultado mais distante, com o Python tendo um tempo de resposta maior em relação ao Java. No entanto, os resultados mostraram que ambas as linguagens podem ser utilizadas sem nenhuma grande vantagem em termos de tempo de resposta.
+
+Considerando a clareza e a legibilidade do código, bem como a ampla adoção e suporte da comunidade, preferimos a utilização do Python. A linguagem Python oferece uma sintaxe mais limpa e expressiva, facilitando o desenvolvimento e a manutenção de aplicativos. Além disso, o ecossistema Python possui uma vasta gama de bibliotecas e frameworks para desenvolvimento web, processamento de dados e aprendizado de máquina, tornando-o uma escolha poderosa para a construção de aplicativos robustos.
