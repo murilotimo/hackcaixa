@@ -10,7 +10,7 @@ import json
 app = Flask(__name__)
 
 # Configurar o nível de log desejado (por exemplo, DEBUG, INFO, WARNING, ERROR)
-app.logger.setLevel(logging.DEBUG)
+#app.logger.setLevel(logging.DEBUG)
 
 # Configurar a conexão com o banco de dados SQL Server
 server = 'dbhackathon.database.windows.net'
@@ -21,10 +21,6 @@ password = 'Password23'
 
 # Configurar a conexão com o Eventhub
 EVENT_HUB_CONNECTION_STR = "Endpoint=sb://eventhack.servicebus.windows.net/;SharedAccessKeyName=hack;SharedAccessKey=HeHeVaVqyVkntO2FnjQcs2Ilh/4MUDo4y+AEhKp8z+g=;EntityPath=simulacoes"
-#EVENT_HUB_CONNECTION_STR = "Endpoint=sb://meuhackcaixa.servicebus.windows.net/;SharedAccessKeyName=minha-politica;SharedAccessKey=kpOB1ZLepFAnb3evFzjspxCXX+voi6Inn+AEhHZBSlA=;EntityPath=testehackcaixa"
-
-
-#EVENT_HUB_NAME = "eventhack"
 
 # Configurar a conexão com o banco de dados MySQL
 conn = pymssql.connect(
@@ -250,5 +246,4 @@ def simulacao_emprestimo():
 
 
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0', debug=True)
     app.run(host='0.0.0.0')
