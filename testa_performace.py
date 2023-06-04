@@ -1,5 +1,5 @@
 # %%
-# Vamos escrever um programa para testar o tempo de resposta de 2 APIs diferentes.
+# Vamos escrever um programa para testar o tempo de resposta das 2 APIs.
 import requests
 import time
 import json
@@ -7,8 +7,8 @@ import pymssql
 import random
 from decimal import Decimal
 
-# %%
-#Vamos capturar os produtos disponíveis no banco de dados SQL Server
+
+# Captura os produtos disponíveis no banco de dados SQL Server
 # Configurar a conexão com o banco de dados SQL Server
 server = 'dbhackathon.database.windows.net'
 port = 1433
@@ -16,7 +16,6 @@ database = 'hack'
 username = 'hack'
 password = 'Password23'
 
-# Configurar a conexão com o banco de dados MySQL
 conn = pymssql.connect(
     host=server,
     port=port,
@@ -57,7 +56,7 @@ for produto in produtos:
 print(f'Quantidade de solicitações de empréstimo: {len(massa_teste)}')
 
 # %%
-# Vamos testar a API em Java
+# Testar a API em Java
 url = 'http://localhost:8002/simulador'
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 tempo_resposta = []
@@ -72,7 +71,7 @@ print(f'Tempo máximo de resposta da API em Java: {max(tempo_resposta)} segundos
 print(f'Tempo Total de resposta da API em Java: {sum(tempo_resposta)} segundos')
 
 # %%
-# Vamos testar a API em Python
+# Testar a API em Python
 url = 'http://localhost:8001/simulador'
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 tempo_resposta = []
@@ -85,6 +84,3 @@ print(f'Tempo médio de resposta da API em Python: {sum(tempo_resposta)/len(temp
 print(f'Tempo mínimo de resposta da API em Python: {min(tempo_resposta)} segundos')
 print(f'Tempo máximo de resposta da API em Python: {max(tempo_resposta)} segundos')
 print(f'Tempo Total de resposta da API em Python: {sum(tempo_resposta)} segundos')
-
-# primeiro 
-# %%
